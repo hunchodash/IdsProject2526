@@ -1,16 +1,8 @@
 package it.hackhub.service;
 
-import it.hackhub.domain.Hackathon;
-import it.hackhub.domain.Iscrizione;
-import it.hackhub.domain.Team;
-import it.hackhub.domain.state.IscrizioneAperta;
-import it.hackhub.repository.HackathonRepository;
-import it.hackhub.repository.IscrizioneRepository;
-import it.hackhub.repository.TeamRepository;
-import it.hackhub.service.exception.HackathonNonInIscrizioneException;
-import it.hackhub.service.exception.HackathonNonTrovatoException;
-import it.hackhub.service.exception.TeamGiaIscrittoException;
-import it.hackhub.service.exception.TeamNonTrovatoException;
+import it.hackhub.domain.*;
+import it.hackhub.repository.*;
+import it.hackhub.service.exception.*;
 
 public class TeamService {
     private final HackathonRepository hackathonRepository;
@@ -26,24 +18,29 @@ public class TeamService {
     }
 
     public void iscriviTeam(Long teamId, Long hackathonId) {
+        // 1. Recupero entità tramite le variabili di istanza (minuscole!)
         Hackathon hackathon = hackathonRepository.findById(hackathonId)
                 .orElseThrow(HackathonNonTrovatoException::new);
-
-        if (!(hackathon.getStato() instanceof IscrizioneAperta)) {
-            throw new HackathonNonInIscrizioneException();
-        }
 
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(TeamNonTrovatoException::new);
 
+        // 2. Controllo Stato tramite Polimorfismo (senza instanceof)
+        if (!hackathon.getStato().puoEffettuareIscrizione()) {
+            throw new HackathonNonInIscrizioneException();
+        }
+
+        // 3. Controllo duplicati
         if (iscrizioneRepository.existsByHackathonIdAndTeamId(hackathonId, teamId)) {
             throw new TeamGiaIscrittoException();
         }
 
-        if (team.getNumeroMembri() > hackathon.getMaxTeamSize()) {
-            throw new IllegalArgumentException("Team troppo grande per questo hackathon");
+        // 4. Delega della validazione al dominio
+        if (!hackathon.isTeamSizeValida(team.getNumeroMembri())) {
+            throw new TeamTroppoGrandeException();
         }
 
+        // 5. Salvataggio
         iscrizioneRepository.save(new Iscrizione(hackathonId, teamId));
     }
 }

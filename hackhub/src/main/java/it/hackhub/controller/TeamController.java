@@ -12,9 +12,9 @@ public class TeamController {
     public String iscriviTeam(Long teamId, Long hackathonId) {
         try {
             teamService.iscriviTeam(teamId, hackathonId);
-            return "Iscrizione completata correttamente";
-        } catch (RuntimeException e) {
-            return "Errore: " + e.getMessage();
+            return "OK: Iscrizione completata con successo!";
+        } catch (Exception e) {
+            return "ERRORE: " + e.getMessage();
         }
     }
 }
