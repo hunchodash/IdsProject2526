@@ -1,19 +1,33 @@
 package it.hackhub.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Team {
     private Long id;
-    private int numeroMembri;
+    private String nomeTeam;
 
-    public Team(Long id, int numeroMembri) {
+    // ORA È CORRETTO: Lista di Utenti
+    private List<Utente> membri;
+
+    public Team(Long id, String nomeTeam) {
         this.id = id;
-        this.numeroMembri = numeroMembri;
+        this.nomeTeam = nomeTeam;
+        this.membri = new ArrayList<>();
     }
 
-    public Long getId() {
-        return id;
+    public void aggiungiMembro(Utente utente) {
+        this.membri.add(utente);
+    }
+
+    public List<Utente> getMembri() {
+        return membri;
     }
 
     public int getNumeroMembri() {
-        return numeroMembri;
+        return membri.size();
     }
+
+    public Long getId() { return id; }
+    public String getNomeTeam() { return nomeTeam; }
 }

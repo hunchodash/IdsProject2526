@@ -5,6 +5,9 @@ import it.hackhub.repository.IscrizioneRepository;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.springframework.stereotype.Repository;
+
+@Repository
 
 public class InMemoryIscrizioneRepository implements IscrizioneRepository {
     private final Set<String> iscrizioni = new HashSet<>();

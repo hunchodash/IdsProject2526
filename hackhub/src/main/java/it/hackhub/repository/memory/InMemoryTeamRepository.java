@@ -6,6 +6,9 @@ import it.hackhub.repository.TeamRepository;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import org.springframework.stereotype.Repository;
+
+@Repository
 
 public class InMemoryTeamRepository implements TeamRepository {
     private final Map<Long, Team> data = new HashMap<>();
