@@ -35,7 +35,7 @@ All'avvio viene avviata un'interfaccia CLI interattiva.
 ```
 it.hackhub/
 ├── adapter/         # Interfacce per servizi esterni (pagamenti, calendario)
-├── controller/      # REST controller (parziale)
+├── controller/      # REST controller
 ├── domain/          # Entità e logica di business
 │   ├── staff/       # Organizzatore, Giudice, Mentore
 │   ├── state/       # Stati dell'hackathon (IscrizioneAperta, InCorso, ecc.)
