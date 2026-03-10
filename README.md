@@ -74,14 +74,6 @@ it.hackhub/
 **Mentor**
 - Generazione link call (simulato)
 
-## Stato attuale e limitazioni
-
-- I dati sono persistenti solo in memoria (perduti allo spegnimento)
-- Password in chiaro (nessun hashing)
-- Autenticazione basata su controllo diretto email/password
-- Nessun test automatizzato
-- API REST solo abbozzate (presente solo TeamController)
-
 ## Possibili evoluzioni
 
 - Sostituzione repository in-memory con JPA/PostgreSQL
