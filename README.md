@@ -1,7 +1,3 @@
-Hai ragione, ho esagerato con l'estremo opposto. Ecco una via di mezzo più sensata:
-
----
-
 # HackHub
 
 Applicazione Spring Boot per la gestione di hackathon.
