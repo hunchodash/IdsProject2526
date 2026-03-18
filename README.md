@@ -2,7 +2,7 @@
 
 Applicazione Spring Boot per la gestione di hackathon.
 
-Requisiti
+##Requisiti
 
 - Java 17+
 - Maven
