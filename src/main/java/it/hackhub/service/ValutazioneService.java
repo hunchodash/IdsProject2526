@@ -6,11 +6,11 @@ import it.hackhub.domain.strategy.StrategiaVittoria;
 import it.hackhub.adapter.PaymentAdapter;
 import it.hackhub.repository.*;
 import it.hackhub.service.exception.*;
-import java.util.List;
 import org.springframework.stereotype.Service;
 
-@Service
+import java.util.List;
 
+@Service
 public class ValutazioneService {
     private final ValutazioneRepository valutazioneRepo;
     private final HackathonRepository hackathonRepo;
@@ -38,7 +38,8 @@ public class ValutazioneService {
 
     public Long proclamaVincitore(Long hackathonId, StrategiaVittoria strategia) {
         Hackathon hackathon = hackathonRepo.findById(hackathonId)
-                .orElseThrow(() -> new RuntimeException("Hackathon non trovato"));        List<Valutazione> valutazioni = valutazioneRepo.findByHackathonId(hackathonId);
+                .orElseThrow(() -> new RuntimeException("Hackathon non trovato"));
+        List<Valutazione> valutazioni = valutazioneRepo.findByHackathonId(hackathonId);
         Long vincitoreId = strategia.calcolaVincitore(valutazioni);
 
         if (vincitoreId != null) {
@@ -46,5 +47,9 @@ public class ValutazioneService {
             hackathon.setStato(new Concluso());
         }
         return vincitoreId;
+    }
+
+    public List<Valutazione> getValutazioniTeam(Long teamId) {
+        return valutazioneRepo.findByTeamId(teamId);
     }
 }

@@ -10,13 +10,13 @@ import it.hackhub.service.exception.HackathonNonTrovatoException;
 import it.hackhub.service.exception.TeamNonIscrittoException;
 import org.springframework.stereotype.Service;
 
-@Service
+import java.util.Optional;
 
+@Service
 public class SubmissionService {
     private final SottomissioneRepository sottomissioneRepository;
     private final HackathonRepository hackathonRepository;
     private final IscrizioneRepository iscrizioneRepository;
-
 
     public SubmissionService(SottomissioneRepository sottomissioneRepository,
                              HackathonRepository hackathonRepository,
@@ -40,5 +40,9 @@ public class SubmissionService {
 
         Sottomissione sottomissione = new Sottomissione(System.currentTimeMillis(), hackathonId, teamId, contenuto);
         sottomissioneRepository.save(sottomissione);
+    }
+
+    public Optional<Sottomissione> getSottomissioneTeam(Long hackathonId, Long teamId) {
+        return sottomissioneRepository.findByHackathonIdAndTeamId(hackathonId, teamId);
     }
 }
