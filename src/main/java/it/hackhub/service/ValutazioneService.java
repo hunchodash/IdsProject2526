@@ -1,55 +1,30 @@
 package it.hackhub.service;
 
-import it.hackhub.domain.*;
-import it.hackhub.domain.state.Concluso;
-import it.hackhub.domain.strategy.StrategiaVittoria;
-import it.hackhub.adapter.PaymentAdapter;
-import it.hackhub.repository.*;
-import it.hackhub.service.exception.*;
+import it.hackhub.domain.Sottomissione;
+import it.hackhub.domain.Valutazione;
+import it.hackhub.repository.SottomissioneRepository;
+import it.hackhub.repository.ValutazioneRepository;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
 public class ValutazioneService {
-    private final ValutazioneRepository valutazioneRepo;
-    private final HackathonRepository hackathonRepo;
-    private final PaymentAdapter paymentAdapter;
+    private final SottomissioneRepository sottomissioneRepository;
+    private final ValutazioneRepository valutazioneRepository;
 
-    public ValutazioneService(ValutazioneRepository valutazioneRepo,
-                              HackathonRepository hackathonRepo,
-                              PaymentAdapter paymentAdapter) {
-        this.valutazioneRepo = valutazioneRepo;
-        this.hackathonRepo = hackathonRepo;
-        this.paymentAdapter = paymentAdapter;
+    public ValutazioneService(SottomissioneRepository sottomissioneRepository,
+                              ValutazioneRepository valutazioneRepository) {
+        this.sottomissioneRepository = sottomissioneRepository;
+        this.valutazioneRepository = valutazioneRepository;
     }
 
-    public void valutaTeam(Long hackathonId, Long teamId, int punteggio, String commento) {
-        Hackathon hackathon = hackathonRepo.findById(hackathonId)
-                .orElseThrow(HackathonNonTrovatoException::new);
-
-        if (!hackathon.getStato().puoValutare()) {
-            throw new RuntimeException("Errore: L'hackathon non è in fase di valutazione.");
-        }
-
-        Valutazione valutazione = new Valutazione(hackathonId, teamId, punteggio, commento);
-        valutazioneRepo.save(valutazione);
+    public Valutazione valutaSottomissione(Long sottomissioneId, int punteggio, String commento) {
+        Sottomissione sottomissione = sottomissioneRepository.findById(sottomissioneId)
+                .orElseThrow(() -> new RuntimeException("Sottomissione non trovata"));
+        Valutazione valutazione = sottomissione.aggiornaValutazione(punteggio, commento);
+        valutazioneRepository.save(valutazione);
+        return valutazione;
     }
 
-    public Long proclamaVincitore(Long hackathonId, StrategiaVittoria strategia) {
-        Hackathon hackathon = hackathonRepo.findById(hackathonId)
-                .orElseThrow(() -> new RuntimeException("Hackathon non trovato"));
-        List<Valutazione> valutazioni = valutazioneRepo.findByHackathonId(hackathonId);
-        Long vincitoreId = strategia.calcolaVincitore(valutazioni);
-
-        if (vincitoreId != null) {
-            paymentAdapter.erogaPremio(vincitoreId, 1000.0);
-            hackathon.setStato(new Concluso());
-        }
-        return vincitoreId;
-    }
-
-    public List<Valutazione> getValutazioniTeam(Long teamId) {
-        return valutazioneRepo.findByTeamId(teamId);
-    }
+    public List<Valutazione> getValutazioniTeam(Long teamId) { return valutazioneRepository.findByTeamId(teamId); }
 }
