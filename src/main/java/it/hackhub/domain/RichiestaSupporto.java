@@ -1,28 +1,27 @@
 package it.hackhub.domain;
 
-import it.hackhub.domain.staff.Mentore;
-
 public class RichiestaSupporto {
     private Long id;
-    private Long teamId;
-    private String nomeTeam;
-    private Mentore mentoreAssegnato;
-    private boolean gestita;
+    private Long utenteId;
+    private String topic;
+    private String descrizione;
 
-    public RichiestaSupporto(Long id, Long teamId, String nomeTeam, Mentore mentoreAssegnato) {
+    public RichiestaSupporto(Long id, Long utenteId, String topic, String descrizione) {
+        if (topic == null || topic.isBlank() || descrizione == null || descrizione.isBlank()) {
+            throw new IllegalArgumentException("Topic e descrizione sono obbligatori");
+        }
         this.id = id;
-        this.teamId = teamId;
-        this.nomeTeam = nomeTeam;
-        this.mentoreAssegnato = mentoreAssegnato;
-        this.gestita = false;
+        this.utenteId = utenteId;
+        this.topic = topic;
+        this.descrizione = descrizione;
     }
 
-    // Getter e Setter
-    public Long getId() { return id; }
-    public Long getTeamId() { return teamId; }
-    public String getNomeTeam() { return nomeTeam; }
-    public Mentore getMentoreAssegnato() { return mentoreAssegnato; }
-    public boolean isGestita() { return gestita; }
+    public void salvaNelSistema() {
+        // Metodo presente nel diagramma: il salvataggio reale è delegato al repository in memoria.
+    }
 
-    public void setGestita(boolean gestita) { this.gestita = gestita; }
+    public Long getId() { return id; }
+    public Long getUtenteId() { return utenteId; }
+    public String getTopic() { return topic; }
+    public String getDescrizione() { return descrizione; }
 }

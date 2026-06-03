@@ -9,11 +9,6 @@ public class Iscrizione {
         this.teamId = teamId;
     }
 
-    public Long getHackathonId() {
-        return hackathonId;
-    }
-
-    public Long getTeamId() {
-        return teamId;
-    }
+    public Long getHackathonId() { return hackathonId; }
+    public Long getTeamId() { return teamId; }
 }
