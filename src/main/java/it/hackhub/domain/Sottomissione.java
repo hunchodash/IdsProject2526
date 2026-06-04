@@ -1,6 +1,9 @@
 package it.hackhub.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Sottomissione {
     private Long id;
@@ -8,6 +11,7 @@ public class Sottomissione {
     private LocalDateTime dataSottomissione;
     private Long hackathonId;
     private Long teamId;
+    private final List<Valutazione> valutazioni = new ArrayList<>();
 
     public Sottomissione(Long id, Long hackathonId, Long teamId, String contenuto) {
         if (contenuto == null || contenuto.isBlank()) {
@@ -25,7 +29,21 @@ public class Sottomissione {
     }
 
     public Valutazione aggiornaValutazione(int punteggio, String commento) {
-        return new Valutazione(hackathonId, teamId, punteggio, commento);
+        return aggiornaValutazione(null, punteggio, commento);
+    }
+
+    public Valutazione aggiornaValutazione(Long giudiceId, int punteggio, String commento) {
+        Valutazione valutazione = new Valutazione(System.currentTimeMillis(), hackathonId, teamId, id, giudiceId, punteggio, commento);
+        valutazioni.add(valutazione);
+        return valutazione;
+    }
+
+    public boolean risultaValutata() {
+        return !valutazioni.isEmpty();
+    }
+
+    public double getPunteggioMedio() {
+        return valutazioni.stream().mapToInt(Valutazione::getPunteggio).average().orElse(0.0);
     }
 
     public Long getId() { return id; }
@@ -33,4 +51,5 @@ public class Sottomissione {
     public LocalDateTime getDataSottomissione() { return dataSottomissione; }
     public Long getHackathonId() { return hackathonId; }
     public Long getTeamId() { return teamId; }
+    public List<Valutazione> getValutazioni() { return Collections.unmodifiableList(valutazioni); }
 }
