@@ -4,6 +4,7 @@ import it.hackhub.domain.Sottomissione;
 import it.hackhub.repository.SottomissioneRepository;
 import org.springframework.stereotype.Repository;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 public class InMemorySottomissioneRepository implements SottomissioneRepository {
@@ -15,6 +16,9 @@ public class InMemorySottomissioneRepository implements SottomissioneRepository 
         return data.values().stream()
                 .filter(s -> s.getHackathonId().equals(hackathonId) && s.getTeamId().equals(teamId))
                 .findFirst();
+    }
+    public List<Sottomissione> findByHackathonId(Long hackathonId) {
+        return data.values().stream().filter(s -> s.getHackathonId().equals(hackathonId)).collect(Collectors.toList());
     }
     public List<Sottomissione> findAll() { return new ArrayList<>(data.values()); }
 }
