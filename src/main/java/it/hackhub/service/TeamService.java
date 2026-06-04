@@ -24,6 +24,9 @@ public class TeamService {
         if (nomeTeam == null || nomeTeam.isBlank()) {
             throw new IllegalArgumentException("Nome team obbligatorio");
         }
+        if (teamRepository.findByNomeTeam(nomeTeam).isPresent()) {
+            throw new IllegalStateException("Nome team già esistente");
+        }
         Team team = new Team(System.currentTimeMillis(), nomeTeam);
         team.aggiungiMembro(creatore);
         teamRepository.save(team);
@@ -40,4 +43,6 @@ public class TeamService {
     public List<Team> getTeamDiUtente(Utente utente) {
         return teamRepository.findByMembro(utente);
     }
+
+    public List<Team> getTuttiITeam() { return teamRepository.findAll(); }
 }

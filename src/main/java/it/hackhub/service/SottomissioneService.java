@@ -10,6 +10,7 @@ import it.hackhub.service.exception.HackathonNonTrovatoException;
 import it.hackhub.service.exception.TeamNonIscrittoException;
 import it.hackhub.service.exception.TeamNonTrovatoException;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
 public class SottomissioneService {
@@ -40,5 +41,14 @@ public class SottomissioneService {
         sottomissioneRepository.save(sottomissione);
         hackathonRepository.save(hackathon);
         return sottomissione;
+    }
+
+    public List<Sottomissione> consultaSottomissioni(Long hackathonId) {
+        return sottomissioneRepository.findByHackathonId(hackathonId);
+    }
+
+    public Sottomissione getDettagli(Long sottomissioneId) {
+        return sottomissioneRepository.findById(sottomissioneId)
+                .orElseThrow(() -> new RuntimeException("Sottomissione non trovata"));
     }
 }

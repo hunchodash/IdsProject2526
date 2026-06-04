@@ -19,12 +19,19 @@ public class ValutazioneService {
     }
 
     public Valutazione valutaSottomissione(Long sottomissioneId, int punteggio, String commento) {
+        return valutaSottomissione(sottomissioneId, null, punteggio, commento);
+    }
+
+    public Valutazione valutaSottomissione(Long sottomissioneId, Long giudiceId, int punteggio, String commento) {
         Sottomissione sottomissione = sottomissioneRepository.findById(sottomissioneId)
                 .orElseThrow(() -> new RuntimeException("Sottomissione non trovata"));
-        Valutazione valutazione = sottomissione.aggiornaValutazione(punteggio, commento);
+        Valutazione valutazione = sottomissione.aggiornaValutazione(giudiceId, punteggio, commento);
         valutazioneRepository.save(valutazione);
+        sottomissioneRepository.save(sottomissione);
         return valutazione;
     }
 
     public List<Valutazione> getValutazioniTeam(Long teamId) { return valutazioneRepository.findByTeamId(teamId); }
+    public List<Valutazione> getValutazioniHackathon(Long hackathonId) { return valutazioneRepository.findByHackathonId(hackathonId); }
+    public List<Valutazione> getValutazioniSottomissione(Long sottomissioneId) { return valutazioneRepository.findBySottomissioneId(sottomissioneId); }
 }
