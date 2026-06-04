@@ -1,83 +1,95 @@
-# HackHub
+# HackHub - Iterazione 2
 
-Applicazione Spring Boot per la gestione di hackathon.
+## Descrizione
 
-## Requisiti
+HackHub è una piattaforma per la gestione di hackathon che consente la creazione e l'organizzazione di eventi, la registrazione dei team, l'invio delle sottomissioni e la valutazione dei progetti.
 
-- Java 17+
+Questa seconda iterazione estende le funzionalità della prima introducendo la gestione completa del ciclo di vita di un hackathon.
+
+---
+
+## Funzionalità implementate
+
+### Gestione Hackathon
+
+- Creazione hackathon
+- Gestione dello stato dell'hackathon
+- Assegnazione di giudici e mentori
+- Proclamazione del team vincitore
+
+### Gestione Team
+
+- Creazione team
+- Iscrizione a un hackathon
+- Verifica dei vincoli di partecipazione
+
+### Gestione Sottomissioni
+
+- Invio di una sottomissione
+- Associazione della sottomissione all'hackathon
+
+### Gestione Valutazioni
+
+- Valutazione delle sottomissioni
+- Calcolo del punteggio medio
+
+### Gestione Supporto
+
+- Apertura di richieste di supporto
+- Consultazione delle richieste aperte
+
+### CLI Interattiva
+
+La seconda iterazione include una Command Line Interface che permette di testare le principali funzionalità del sistema.
+
+---
+
+## Architettura
+
+Il progetto segue una struttura a livelli:
+
+- Domain
+- Repository
+- Service
+- CLI
+
+La persistenza è realizzata tramite repository in memoria.
+
+---
+
+## Tecnologie utilizzate
+
+- Java 11+
+- Spring Boot 3
 - Maven
 
-## Avvio
+---
+
+## Avvio del progetto
+
+Eseguire la classe:
+
+```java
+HackHubApplication
+```
+
+oppure:
 
 ```bash
 mvn spring-boot:run
 ```
 
-All'avvio viene avviata un'interfaccia CLI interattiva.
+---
 
-## Dati di test preconfigurati
+## Use Case implementati
 
-| Ruolo | Email | Password |
-|-------|-------|----------|
-| Organizzatore | aziz@hackhub.it | admin |
-| Giudice | rossi@univ.it | judge |
-| Mentore | piero@mentors.it | mentor |
-| Utente | mario@email.it | 1234 |
+- Creare hackathon
+- Assegnare giudici e mentori
+- Iscrivere team a hackathon
+- Inviare una sottomissione
+- Valutare una sottomissione
+- Inviare una richiesta di supporto
+- Consultare richieste di supporto
+- Proclamare il vincitore
 
-È presente un hackathon "Java Challenge 2026" in stato ISCRIZIONE_APERTA e un team "Dev Team" con l'utente Mario come membro.
 
-## Struttura del progetto
-
-```
-it.hackhub/
-├── adapter/         # Interfacce per servizi esterni (pagamenti, calendario)
-├── controller/      # REST controller
-├── domain/          # Entità e logica di business
-│   ├── staff/       # Organizzatore, Giudice, Mentore
-│   ├── state/       # Stati dell'hackathon (IscrizioneAperta, InCorso, ecc.)
-│   └── strategy/    # Strategie per determinare il vincitore
-├── repository/      # Interfacce per accesso dati
-│   └── memory/      # Implementazioni in memoria (HashMap)
-├── service/         # Servizi applicativi
-│   └── exception/   # Eccezioni specifiche di dominio
-└── HackHubApplication.java
-```
-
-## Pattern implementati
-
-- **State**: gestione del ciclo di vita dell'hackathon
-- **Strategy**: calcolo del vincitore intercambiabile
-- **Adapter**: integrazione con servizi esterni
-- **Repository**: astrazione dell'accesso ai dati
-
-## Funzionalità principali
-
-**Partecipanti**
-- Registrazione e login
-- Creazione team
-- Iscrizione a hackathon
-- Invio sottomissioni
-- Richiesta supporto mentor
-- Visualizzazione valutazioni
-
-**Organizzatori**
-- Creazione hackathon
-- Proclamazione vincitore
-
-**Giudici**
-- Assegnazione punteggi (0-10) e commenti
-
-**Mentor**
-- Generazione link call (simulato)
-
-## Possibili evoluzioni
-
-- Sostituzione repository in-memory con JPA/PostgreSQL
-- Spring Security con JWT e hashing password
-- Esposizione API REST complete
-- Test unitari e di integrazione
-- Frontend separato (React/Angular)
-
-## Note
-
-Il progetto è pensato come base per comprendere l'architettura a strati e l'applicazione di pattern in un contesto Spring Boot. Le implementazioni attuali privilegiano la chiarezza rispetto alla completezza.
