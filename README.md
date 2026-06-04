@@ -1,42 +1,45 @@
-\# HackHub - Iterazione 2
+HackHub - Iterazione 2
+Descrizione
 
+HackHub è una piattaforma per la gestione di hackathon che consente agli utenti di partecipare a competizioni, creare team, inviare progetti e collaborare con giudici e mentori.
 
+Questa seconda iterazione amplia le funzionalità introdotte nella prima versione, aggiungendo la gestione delle iscrizioni agli hackathon, delle sottomissioni, delle valutazioni e delle richieste di supporto.
 
-\## Descrizione
+Funzionalità implementate
+Creazione e gestione degli hackathon
+Creazione dei team
+Iscrizione dei team agli hackathon
+Invio delle sottomissioni
+Valutazione delle sottomissioni da parte dei giudici
+Gestione delle richieste di supporto
+Assegnazione di giudici e mentori agli hackathon
+Proclamazione del team vincitore
+Interfaccia a riga di comando (CLI) per il testing delle principali funzionalità
+Architettura
 
+Il progetto è organizzato secondo una struttura a livelli:
 
+Domain: contiene le entità del dominio applicativo
+Repository: gestione dei dati tramite repository in memoria
+Service: implementazione della logica applicativa
+Controller: coordinamento dei casi d'uso
+Adapter: simulazione di servizi esterni
+CLI: interfaccia testuale per l'esecuzione e il collaudo del sistema
+Tecnologie utilizzate
+Java
+Spring Boot
+Maven
+Avvio del progetto
 
-HackHub è una piattaforma per la gestione di hackathon che consente la creazione e l'organizzazione di eventi, la registrazione dei team, l'invio delle sottomissioni e la valutazione dei progetti.
+Per eseguire il progetto è sufficiente avviare la classe:
 
+HackHubApplication
 
+All'avvio viene caricata una configurazione dimostrativa e viene resa disponibile una CLI interattiva per testare le funzionalità implementate.
 
-Questa seconda iterazione estende le funzionalità della prima introducendo la gestione completa del ciclo di vita di un hackathon.
+Iterazione
 
-
-
-\---
-
-
-
-\## Funzionalità implementate
-
-
-
-\### Gestione Hackathon
-
-
-
-\- Creazione hackathon
-
-\- Gestione dello stato dell'hackathon
-
-\- Assegnazione di giudici e mentori
-
-\- Proclamazione del team vincitore
-
-
-
-\### Gestione Team
+Questa iterazione implementa i casi d'uso previsti dalla seconda fase del progetto e rappresenta un'evoluzione della prima versione sviluppata durante il corso di Ingegneria del Software.
 
 
 
