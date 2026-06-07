@@ -1,190 +1,151 @@
-\# HackHub - Iterazione 2
 
 
+# HackHub - Iterazione 3
 
-\## Descrizione
+## Descrizione
 
+HackHub è una piattaforma per la gestione di hackathon che consente l'interazione tra organizzatori, team, giudici e mentori durante l'intero ciclo di vita di una competizione.
 
+Questa terza iterazione estende la seconda introducendo una struttura applicativa più completa, una migliore separazione delle responsabilità tra i componenti del sistema e nuovi casi d'uso relativi alla gestione degli utenti, dei profili e delle attività di supporto.
 
-HackHub è una piattaforma per la gestione di hackathon che consente la creazione e l'organizzazione di eventi, la registrazione dei team, l'invio delle sottomissioni e la valutazione dei progetti.
 
 
+## Funzionalità Implementate
 
-Questa seconda iterazione estende le funzionalità della prima introducendo la gestione completa del ciclo di vita di un hackathon.
+### Gestione Utenti
 
+* Registrazione di nuovi utenti
+* Autenticazione tramite login
+* Visualizzazione del profilo
+* Modifica delle informazioni del profilo
 
+### Gestione Team
 
-\---
+* Creazione di team
+* Associazione del creatore come membro del team
+* Iscrizione di un team a un hackathon
+* Controllo dei vincoli di partecipazione
 
+### Gestione Hackathon
 
+* Creazione di hackathon
+* Gestione dello stato dell'hackathon
+* Consultazione degli hackathon disponibili
+* Assegnazione di giudici e mentori
+* Chiusura dell'hackathon e proclamazione del vincitore
 
-\## Funzionalità implementate
+### Gestione Sottomissioni
 
+* Invio di una sottomissione
+* Associazione della sottomissione all'hackathon
+* Controllo delle condizioni di invio
 
+### Gestione Valutazioni
 
-\### Gestione Hackathon
+* Valutazione delle sottomissioni da parte dei giudici
+* Inserimento di punteggi e commenti
+* Calcolo dei risultati finali
+* Generazione della classifica
 
+### Gestione Supporto
 
+* Apertura di richieste di supporto
+* Consultazione delle richieste aperte
+* Visualizzazione delle richieste da parte dei mentori
 
-\- Creazione hackathon
+### Gestione Vincitore
 
-\- Gestione dello stato dell'hackathon
+* Determinazione del team vincitore sulla base delle valutazioni
+* Erogazione simulata del premio tramite adapter di pagamento
+* Aggiornamento dello stato dell'hackathon
 
-\- Assegnazione di giudici e mentori
+---
 
-\- Proclamazione del team vincitore
+## Architettura
 
+Il progetto segue una struttura multilivello composta da:
 
+* Entity
+* Repository
+* Service
+* Controller
+* CLI
+* Adapter
 
-\### Gestione Team
+Le responsabilità applicative sono distribuite tra controller dedicati ai principali casi d'uso e servizi specializzati per la logica di business.
 
+La persistenza continua ad essere realizzata tramite repository in memoria.
 
+---
 
-\- Creazione team
+## Tecnologie Utilizzate
 
-\- Iscrizione a un hackathon
+* Java 17
+* Spring Boot 3
+* Maven
 
-\- Verifica dei vincoli di partecipazione
+---
 
-
-
-\### Gestione Sottomissioni
-
-
-
-\- Invio di una sottomissione
-
-\- Associazione della sottomissione all'hackathon
-
-
-
-\### Gestione Valutazioni
-
-
-
-\- Valutazione delle sottomissioni
-
-\- Calcolo del punteggio medio
-
-
-
-\### Gestione Supporto
-
-
-
-\- Apertura di richieste di supporto
-
-\- Consultazione delle richieste aperte
-
-
-
-\### CLI Interattiva
-
-
-
-La seconda iterazione include una Command Line Interface che permette di testare le principali funzionalità del sistema.
-
-
-
-\---
-
-
-
-\## Architettura
-
-
-
-Il progetto segue una struttura a livelli:
-
-
-
-\- Domain
-
-\- Repository
-
-\- Service
-
-\- CLI
-
-
-
-La persistenza è realizzata tramite repository in memoria.
-
-
-
-\---
-
-
-
-\## Tecnologie utilizzate
-
-
-
-\- Java 11+
-
-\- Spring Boot 3
-
-\- Maven
-
-
-
-\---
-
-
-
-\## Avvio del progetto
-
-
+## Avvio del Progetto
 
 Eseguire la classe:
 
-
-
 ```java
-
 HackHubApplication
-
 ```
-
-
 
 oppure:
 
-
-
 ```bash
-
 mvn spring-boot:run
-
 ```
 
+---
 
+## Principali Use Case Implementati
 
-\---
+### Utente
 
+* Registrarsi
+* Accedere
+* Gestire il proprio profilo
+* Creare un team
 
+### Membro Team
 
-\## Use Case implementati
+* Iscrivere un team a un hackathon
+* Inviare una sottomissione
+* Inviare una richiesta di supporto
 
+### Organizzatore
 
+* Creare un hackathon
+* Definire le informazioni dell'hackathon
+* Assegnare giudici e mentori
+* Proclamare il vincitore
 
-\- Creare hackathon
+### Giudice
 
-\- Assegnare giudici e mentori
+* Valutare una sottomissione
 
-\- Iscrivere team a hackathon
+### Mentore
 
-\- Inviare una sottomissione
+* Visualizzare le richieste di supporto
 
-\- Valutare una sottomissione
+---
 
-\- Inviare una richiesta di supporto
+## Evoluzione Rispetto alla Seconda Iterazione
 
-\- Consultare richieste di supporto
+Le principali novità introdotte sono:
 
-\- Proclamare il vincitore
+* Introduzione della gestione utenti e autenticazione.
+* Gestione e modifica del profilo utente.
+* Introduzione di controller dedicati ai principali casi d'uso.
+* Maggiore separazione tra interfaccia utente e logica applicativa.
+* Miglioramento della gestione delle richieste di supporto.
+* Introduzione della classifica finale.
+* Gestione della proclamazione del vincitore.
+* Utilizzo di adapter per l'integrazione con servizi esterni simulati.
+* Maggiore aderenza ai diagrammi UML di analisi, progetto e sequenza della terza iterazione.
 
-
-
-
-
+---
