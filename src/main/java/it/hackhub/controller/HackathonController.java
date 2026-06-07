@@ -1,5 +1,6 @@
 package it.hackhub.controller;
 
+import it.hackhub.domain.ClassificaEntry;
 import it.hackhub.domain.Hackathon;
 import it.hackhub.domain.Team;
 import it.hackhub.domain.staff.Giudice;
@@ -50,5 +51,14 @@ public class HackathonController {
         return hackathonService.proclamaVincitoreAutomaticamente(hackathonId);
     }
 
+    public List<ClassificaEntry> calcolaClassifica(Long hackathonId) {
+        return hackathonService.calcolaClassifica(hackathonId);
+    }
+
+    public Hackathon recuperaDettagliHackathon(Long hackathonId) {
+        return hackathonService.getHackathon(hackathonId);
+    }
+
     public List<Hackathon> consultaHackathon() { return hackathonService.consultaHackathon(); }
 }
+
