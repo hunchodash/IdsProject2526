@@ -1,186 +1,188 @@
-# HackHub – Iterazione Finale
+# HackHub
 
-## Descrizione
+Piattaforma per la gestione di hackathon sviluppata in Java e Spring Boot.
 
-HackHub è una piattaforma per la gestione di hackathon che supporta l'intero ciclo di vita di una competizione, dalla creazione dell'evento fino alla proclamazione del team vincitore.
-
-La piattaforma consente la collaborazione tra organizzatori, giudici, mentori e partecipanti, offrendo strumenti per la gestione degli hackathon, delle iscrizioni, delle sottomissioni, delle valutazioni e delle attività di supporto.
-
-Questa versione rappresenta la release finale del progetto e integra tutte le funzionalità sviluppate nel corso delle iterazioni precedenti.
+HackHub supporta l'intero ciclo di vita di un hackathon: dalla creazione dell'evento fino alla valutazione delle sottomissioni e alla proclamazione del team vincitore. La piattaforma gestisce utenti, team, organizzatori, giudici e mentori, ciascuno con ruoli e responsabilità differenti. L'interfaccia è una CLI role-aware.
 
 ---
 
-## Attori del Sistema
+## Indice
+
+- [Ciclo di vita dell'Hackathon](#ciclo-di-vita-dellhackathon)
+- [Attori del sistema](#attori-del-sistema)
+- [Funzionalità implementate](#funzionalità-implementate)
+- [Architettura](#architettura)
+- [Design Pattern](#design-pattern)
+- [Tecnologie](#tecnologie)
+- [Avvio del progetto](#avvio-del-progetto)
+- [Dati dimostrativi](#dati-dimostrativi)
+- [Flusso di test consigliato](#flusso-di-test-consigliato)
+
+---
+
+## Ciclo di vita dell'Hackathon
+
+Ogni hackathon attraversa quattro stati principali:
+
+| Stato               | Operazioni disponibili                                           |
+|---------------------|------------------------------------------------------------------|
+| `ISCRIZIONI_APERTE` | Iscrizione dei team                                             |
+| `IN_CORSO`          | Invio e aggiornamento sottomissioni, richieste di supporto      |
+| `VALUTAZIONE`       | Valutazione delle sottomissioni da parte del giudice            |
+| `CONCLUSO`          | Consultazione del vincitore proclamato                          |
+
+Le date vengono validate rispettando la sequenza logica:
+
+```
+scadenza iscrizioni <= data inizio < data fine
+```
+
+---
+
+## Attori del sistema
 
 ### Visitatore
-- Consulta gli hackathon pubblici.
-- Può registrarsi alla piattaforma.
+Utente non autenticato. Può consultare gli hackathon pubblici, registrarsi e accedere. Non può accedere alle funzionalità riservate.
 
-### Utente
-- Gestisce il proprio profilo.
-- Può creare un team.
-- Può accettare o rifiutare inviti ai team.
+### Utente registrato
+Può gestire il proprio profilo, creare un team, ricevere e gestire inviti. Un utente può appartenere a **un solo team alla volta**.
 
 ### Membro del Team
-- Iscrive il proprio team agli hackathon.
-- Invia e aggiorna le sottomissioni.
-- Richiede supporto ai mentori.
+Può iscrivere il team a un hackathon, inviare e aggiornare sottomissioni, e inviare richieste di supporto ai mentori.
 
 ### Organizzatore
-- Crea e gestisce gli hackathon.
-- Assegna giudici e mentori.
-- Proclama il team vincitore.
+Membro dello staff. Può creare hackathon, assegnare giudici e mentori, consultare le sottomissioni, proclamare il vincitore e attivare l'erogazione simulata del premio. La creazione di un hackathon richiede **almeno un giudice e un mentore**.
 
 ### Giudice
-- Visualizza le sottomissioni degli hackathon assegnati.
-- Valuta le sottomissioni tramite punteggio e commento.
+Membro dello staff. Può visualizzare le sottomissioni degli hackathon assegnati e valutarle con un punteggio (0–10) e un commento testuale.
 
 ### Mentore
-- Gestisce le richieste di supporto.
-- Propone call di assistenza.
-- Segnala eventuali violazioni del regolamento.
+Membro dello staff. Può visualizzare le richieste di supporto, proporre call tramite il sistema Calendar simulato e segnalare violazioni del regolamento all'organizzatore.
 
 ---
 
-## Funzionalità Implementate
+## Funzionalità implementate
 
-### Gestione Utenti
-- Registrazione e autenticazione.
-- Gestione del profilo personale.
-- Invio e gestione degli inviti ai team.
-
-### Gestione Team
-- Creazione dei team.
-- Accettazione e rifiuto degli inviti.
-- Controllo del vincolo di appartenenza ad un solo team.
-
-### Gestione Hackathon
-- Creazione di nuovi hackathon.
-- Gestione delle informazioni dell'evento.
-- Assegnazione di giudici e mentori.
-- Consultazione degli hackathon disponibili.
-
-### Gestione Sottomissioni
-- Invio delle sottomissioni.
-- Aggiornamento delle sottomissioni entro la scadenza.
-- Consultazione delle sottomissioni del team.
-
-### Gestione Valutazioni
-- Valutazione delle sottomissioni.
-- Inserimento di commenti e punteggi.
-- Calcolo dei risultati finali.
-
-### Gestione Supporto
-- Apertura di richieste di supporto.
-- Visualizzazione delle richieste da parte dei mentori.
-- Pianificazione di call tramite sistema esterno.
-
-### Gestione Vincitore
-- Selezione del team vincitore.
-- Erogazione simulata del premio.
-- Chiusura dell'hackathon.
+- **Utenti:** registrazione, login, gestione profilo, distinzione ruoli, CLI differenziata per ruolo
+- **Team:** creazione, inviti, accettazione/rifiuto, vincolo di appartenenza singola, iscrizione agli hackathon
+- **Hackathon:** creazione, configurazione (nome, regolamento, date, luogo, premio, dimensione team), assegnazione staff, consultazione pubblica
+- **Sottomissioni:** invio, aggiornamento, controllo iscrizione e stato hackathon; ogni team può avere **una sola sottomissione per hackathon**
+- **Valutazioni:** punteggio 0–10, commento testuale, classifica finale
+- **Supporto:** apertura richieste, visualizzazione da parte dei mentori, pianificazione call, segnalazione violazioni
+- **Vincitore:** calcolo classifica, selezione automatica, proclamazione, chiusura hackathon, erogazione simulata del premio
 
 ---
 
 ## Architettura
 
-Il progetto adotta un'architettura multilivello composta dai seguenti componenti:
+Il progetto adotta un'architettura multilivello:
 
-- Domain Model
-- Repository
-- Service
-- Controller
-- CLI
-- Adapter
+```
+CLI
+ ↓
+Controller
+ ↓
+Service
+ ↓
+Repository
+ ↓
+Domain Model
+```
 
-La logica applicativa è separata dall'interfaccia utente tramite controller e servizi dedicati.
+| Package       | Responsabilità                                          |
+|---------------|---------------------------------------------------------|
+| `domain`      | Entità principali del dominio                           |
+| `domain.staff`| Ruoli dello staff                                       |
+| `controller`  | Operazioni esposte alla CLI                             |
+| `service`     | Logica applicativa                                      |
+| `repository`  | Accesso ai dati (in memoria)                            |
+| `adapter`     | Integrazioni simulate con sistemi esterni               |
+| `strategy`    | Logica di selezione del vincitore                       |
+| `cli`         | Interfaccia a linea di comando e dati dimostrativi      |
 
-La persistenza è realizzata tramite repository in memoria.
+La persistenza è realizzata **in memoria** tramite repository Java. I dati vengono persi alla chiusura dell'applicazione e ripristinati dai dati demo al riavvio. L'architettura a interfacce permette di sostituire i repository in memoria con implementazioni basate su database (es. Spring Data JPA) senza modificare i livelli superiori.
 
 ---
 
-## Design Pattern Utilizzati
+## Design Pattern
 
-### Strategy
-Utilizzato per la selezione del team vincitore dell'hackathon.
+### Strategy Pattern — Selezione del vincitore
 
-### Adapter
-Utilizzato per integrare servizi esterni simulati:
+Separa il criterio di selezione dalla logica principale dell'hackathon, rendendo semplice introdurre nuovi criteri in futuro (es. voto del pubblico, criteri misti).
 
-- Sistema di pagamento
-- Sistema di calendarizzazione delle call
+- `WinnerSelectionStrategy` — interfaccia
+- `HighestScoreWinnerStrategy` — seleziona il team con il punteggio medio più alto
+
+### Adapter Pattern — Servizi esterni simulati
+
+Disaccoppia i servizi esterni dall'applicazione. Le implementazioni fake possono essere sostituite con integrazioni reali senza modificare il resto del sistema.
+
+- `CalendarAdapter` / `FakeCalendarAdapter` — pianificazione call mentore-team
+- `PaymentAdapter` / `FakePaymentAdapter` — erogazione simulata del premio
 
 ---
 
-## Tecnologie Utilizzate
+## Tecnologie
 
 - Java 17
 - Spring Boot 3
 - Maven
+- CLI come strato di presentazione
+- Repository in memoria
 
 ---
 
-## Avvio del Progetto
+## Avvio del progetto
 
-Eseguire la classe:
-
-```java
-HackHubApplication
+**Compilazione:**
+```bash
+mvn clean compile
 ```
 
-oppure:
-
+**Avvio:**
 ```bash
 mvn spring-boot:run
 ```
 
----
-
-## Principali Use Case
-
-### Utente
-- Registrarsi.
-- Effettuare il login.
-- Gestire il profilo.
-- Creare un team.
-
-### Membro del Team
-- Iscrivere il team ad un hackathon.
-- Inviare una sottomissione.
-- Aggiornare una sottomissione.
-- Richiedere supporto.
-
-### Organizzatore
-- Creare un hackathon.
-- Assegnare giudici e mentori.
-- Proclamare il vincitore.
-
-### Giudice
-- Consultare le sottomissioni.
-- Valutare le sottomissioni.
-
-### Mentore
-- Visualizzare richieste di supporto.
-- Proporre call di supporto.
-- Segnalare team all'organizzatore.
+In alternativa, eseguire direttamente la classe principale:
+```java
+HackHubApplication
+```
 
 ---
 
-## Evoluzione del Progetto
+## Dati dimostrativi
 
-Nel corso delle quattro iterazioni il progetto è stato progressivamente esteso passando da una semplice gestione degli hackathon ad una piattaforma completa che supporta:
+All'avvio vengono caricati automaticamente dati demo per testare il sistema.
 
-- Gestione utenti e autenticazione.
-- Gestione team e inviti.
-- Gestione del personale di supporto.
-- Workflow completo delle sottomissioni.
-- Sistema di valutazione.
-- Gestione delle richieste di supporto.
-- Integrazione con servizi esterni.
-- Proclamazione del vincitore ed erogazione del premio.
+### Utenti
+
+| Ruolo          | Email                  | Password   |
+|----------------|------------------------|------------|
+| Utente normale | `mario@hackhub.it`     | `password` |
+| Organizzatore  | `admin@hackhub.it`     | `password` |
+| Giudice        | `giudice@hackhub.it`   | `password` |
+| Mentore        | `mentore@hackhub.it`   | `password` |
+
+### Dati precaricati
+
+| Elemento              | Valore                              |
+|-----------------------|-------------------------------------|
+| Team                  | Team Alpha                          |
+| Hackathon – Iscrizioni| HackHub Demo - Iscrizioni           |
+| Hackathon – In Corso  | HackHub Demo - In Corso             |
+| Hackathon – Valutazione| HackHub Demo - Valutazione         |
+| Sottomissione demo    | `https://repo.demo/team-alpha`      |
 
 ---
 
-## Stato del Progetto
+## Flusso di test consigliato
 
-Versione finale sviluppata per il corso di Ingegneria del Software.
+1. Consultare gli hackathon come **visitatore**
+2. Effettuare il login come **utente normale** e gestire il team
+3. Inviare una **richiesta di supporto**
+4. Effettuare il login come **giudice** e valutare una sottomissione
+5. Effettuare il login come **organizzatore** e proclamare il vincitore
+6. Effettuare il login come **mentore** e proporre una call di supporto
+
+
