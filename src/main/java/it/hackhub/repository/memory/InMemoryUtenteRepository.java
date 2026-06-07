@@ -20,6 +20,8 @@ public class InMemoryUtenteRepository implements UtenteRepository {
     }
 
     public void save(Utente utente) {
+        data.values().removeIf(u -> u.getId().equals(utente.getId()) && !u.getEmail().equals(utente.getEmail()));
+        byEmail.entrySet().removeIf(e -> e.getValue().getId().equals(utente.getId()) && !e.getKey().equals(utente.getEmail()));
         data.put(utente.getId(), utente);
         byEmail.put(utente.getEmail(), utente);
     }

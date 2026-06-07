@@ -7,10 +7,28 @@ public class Utente {
     private String password;
 
     public Utente(Long id, String nome, String email, String password) {
+        if (nome == null || nome.isBlank() || email == null || email.isBlank() || password == null || password.isBlank()) {
+            throw new IllegalArgumentException("Nome, email e password sono obbligatori");
+        }
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.password = password;
+    }
+
+    public void aggiornaProfilo(String nuovoNome, String nuovaEmail) {
+        if (nuovoNome == null || nuovoNome.isBlank()) {
+            throw new IllegalArgumentException("Nome obbligatorio");
+        }
+        if (nuovaEmail == null || nuovaEmail.isBlank()) {
+            throw new IllegalArgumentException("Email obbligatoria");
+        }
+        this.nome = nuovoNome;
+        this.email = nuovaEmail;
+    }
+
+    public String getDatiBase() {
+        return nome + " - " + email + " - " + getClass().getSimpleName();
     }
 
     public Long getId() { return id; }
