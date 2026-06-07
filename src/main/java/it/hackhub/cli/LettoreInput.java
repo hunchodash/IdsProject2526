@@ -23,6 +23,10 @@ public class LettoreInput {
         return Integer.parseInt(stringa(messaggio));
     }
 
+    public double doubleValue(String messaggio) {
+        return Double.parseDouble(stringa(messaggio));
+    }
+
     public LocalDateTime dataOra(String messaggio) {
         return LocalDateTime.parse(stringa(messaggio + " [yyyy-MM-ddTHH:mm]: "));
     }

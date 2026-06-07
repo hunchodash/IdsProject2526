@@ -17,6 +17,8 @@ public class Hackathon {
     private LocalDateTime scadenzaIscrizioni;
     private LocalDateTime dataInizio;
     private LocalDateTime dataFine;
+    private String luogo;
+    private double premioInDenaro;
     private int maxTeamSize;
     private Organizzatore organizzatore;
     private HackathonStatus stato;
@@ -31,7 +33,7 @@ public class Hackathon {
                      LocalDateTime scadenzaIscrizioni, LocalDateTime dataInizio,
                      LocalDateTime dataFine, int maxTeamSize,
                      Organizzatore organizzatore, Giudice giudice) {
-        this(id, nome, regolamento, scadenzaIscrizioni, dataInizio, dataFine, maxTeamSize, organizzatore);
+        this(id, nome, regolamento, scadenzaIscrizioni, dataInizio, dataFine, "Da definire", 0.0, maxTeamSize, organizzatore);
         if (giudice != null) {
             aggiungiGiudice(giudice);
         }
@@ -40,6 +42,13 @@ public class Hackathon {
     public Hackathon(Long id, String nome, String regolamento,
                      LocalDateTime scadenzaIscrizioni, LocalDateTime dataInizio,
                      LocalDateTime dataFine, int maxTeamSize,
+                     Organizzatore organizzatore) {
+        this(id, nome, regolamento, scadenzaIscrizioni, dataInizio, dataFine, "Da definire", 0.0, maxTeamSize, organizzatore);
+    }
+
+    public Hackathon(Long id, String nome, String regolamento,
+                     LocalDateTime scadenzaIscrizioni, LocalDateTime dataInizio,
+                     LocalDateTime dataFine, String luogo, double premioInDenaro, int maxTeamSize,
                      Organizzatore organizzatore) {
         if (nome == null || nome.isBlank()) {
             throw new IllegalArgumentException("Nome hackathon obbligatorio");
@@ -53,12 +62,20 @@ public class Hackathon {
         if (maxTeamSize <= 0) {
             throw new IllegalArgumentException("Numero massimo membri non valido");
         }
+        if (luogo == null || luogo.isBlank()) {
+            throw new IllegalArgumentException("Luogo obbligatorio");
+        }
+        if (premioInDenaro < 0) {
+            throw new IllegalArgumentException("Premio in denaro non valido");
+        }
         this.id = id;
         this.nome = nome;
         this.regolamento = regolamento;
         this.scadenzaIscrizioni = scadenzaIscrizioni;
         this.dataInizio = dataInizio;
         this.dataFine = dataFine;
+        this.luogo = luogo;
+        this.premioInDenaro = premioInDenaro;
         this.maxTeamSize = maxTeamSize;
         this.organizzatore = organizzatore;
         this.stato = calcolaStatoCorrente();
@@ -164,9 +181,6 @@ public class Hackathon {
         if (now.isBefore(scadenzaIscrizioni)) {
             return HackathonStatus.ISCRIZIONI_APERTE;
         }
-        if (now.isBefore(dataInizio)) {
-            return HackathonStatus.CREATO;
-        }
         if (now.isBefore(dataFine)) {
             return HackathonStatus.IN_CORSO;
         }
@@ -187,6 +201,8 @@ public class Hackathon {
     public LocalDateTime getScadenzaIscrizioni() { return scadenzaIscrizioni; }
     public LocalDateTime getDataInizio() { return dataInizio; }
     public LocalDateTime getDataFine() { return dataFine; }
+    public String getLuogo() { return luogo; }
+    public double getPremioInDenaro() { return premioInDenaro; }
     public int getMaxTeamSize() { return maxTeamSize; }
     public Organizzatore getOrganizzatore() { return organizzatore; }
     public Giudice getGiudice() { return giudici.isEmpty() ? null : giudici.get(0); }

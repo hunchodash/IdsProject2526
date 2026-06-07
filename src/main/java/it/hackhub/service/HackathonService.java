@@ -16,6 +16,7 @@ import it.hackhub.repository.SottomissioneRepository;
 import it.hackhub.repository.TeamRepository;
 import it.hackhub.repository.UtenteRepository;
 import it.hackhub.repository.ValutazioneRepository;
+import it.hackhub.strategy.WinnerSelectionStrategy;
 import it.hackhub.service.exception.HackathonNonTrovatoException;
 import it.hackhub.service.exception.TeamNonTrovatoException;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class HackathonService {
-    private static final double PREMIO_DIMOSTRATIVO = 0.0;
 
     private final HackathonRepository hackathonRepository;
     private final UtenteRepository utenteRepository;
@@ -34,19 +34,45 @@ public class HackathonService {
     private final SottomissioneRepository sottomissioneRepository;
     private final ValutazioneRepository valutazioneRepository;
     private final PaymentAdapter paymentAdapter;
+    private final WinnerSelectionStrategy winnerSelectionStrategy;
 
     public HackathonService(HackathonRepository hackathonRepository,
                             UtenteRepository utenteRepository,
                             TeamRepository teamRepository,
                             SottomissioneRepository sottomissioneRepository,
                             ValutazioneRepository valutazioneRepository,
-                            PaymentAdapter paymentAdapter) {
+                            PaymentAdapter paymentAdapter,
+                            WinnerSelectionStrategy winnerSelectionStrategy) {
         this.hackathonRepository = hackathonRepository;
         this.utenteRepository = utenteRepository;
         this.teamRepository = teamRepository;
         this.sottomissioneRepository = sottomissioneRepository;
         this.valutazioneRepository = valutazioneRepository;
         this.paymentAdapter = paymentAdapter;
+        this.winnerSelectionStrategy = winnerSelectionStrategy;
+    }
+
+    public Hackathon creaHackathon(String nome, String regolamento,
+                                   LocalDateTime scadenzaIscrizioni,
+                                   LocalDateTime dataInizio,
+                                   LocalDateTime dataFine,
+                                   String luogo,
+                                   double premioInDenaro,
+                                   int maxTeamSize,
+                                   Organizzatore organizzatore,
+                                   Giudice giudice,
+                                   List<Mentore> mentori) {
+        Hackathon hackathon = new Hackathon(System.currentTimeMillis(), nome, regolamento,
+                scadenzaIscrizioni, dataInizio, dataFine, luogo, premioInDenaro, maxTeamSize, organizzatore);
+        if (giudice != null) {
+            hackathon.aggiungiGiudice(giudice);
+        }
+        if (mentori != null) {
+            mentori.forEach(hackathon::aggiungiMentore);
+        }
+        hackathon.salvaNelSistema();
+        hackathonRepository.save(hackathon);
+        return hackathon;
     }
 
     public Hackathon creaHackathon(String nome, String regolamento,
@@ -106,7 +132,7 @@ public class HackathonService {
         verificaSottomissioniValutate(hackathonId);
         Team vincitore = teamRepository.findById(teamVincitoreId).orElseThrow(TeamNonTrovatoException::new);
         hackathon.setVincitore(vincitore);
-        boolean premioErogato = paymentAdapter.erogaPremio(vincitore, PREMIO_DIMOSTRATIVO);
+        boolean premioErogato = paymentAdapter.erogaPremio(vincitore, hackathon.getPremioInDenaro());
         if (!premioErogato) {
             throw new IllegalStateException("Premio non erogato");
         }
@@ -117,10 +143,8 @@ public class HackathonService {
 
     public Team proclamaVincitoreAutomaticamente(Long hackathonId) {
         List<ClassificaEntry> classifica = calcolaClassifica(hackathonId);
-        if (classifica.isEmpty()) {
-            throw new IllegalStateException("Nessuna sottomissione valutata");
-        }
-        return proclamaVincitore(hackathonId, classifica.get(0).getTeam().getId());
+        ClassificaEntry vincitore = winnerSelectionStrategy.selezionaVincitore(classifica);
+        return proclamaVincitore(hackathonId, vincitore.getTeam().getId());
     }
 
     public List<ClassificaEntry> calcolaClassifica(Long hackathonId) {
@@ -145,6 +169,22 @@ public class HackathonService {
         if (!tutteValutate) {
             throw new IllegalStateException("Il giudice non ha ancora valutato tutte le sottomissioni");
         }
+    }
+
+    public List<Hackathon> consultaHackathonAssegnati(Long staffId) {
+        return hackathonRepository.findAll().stream()
+                .filter(h -> h.getGiudici().stream().anyMatch(g -> g.getId().equals(staffId))
+                        || h.getMentori().stream().anyMatch(m -> m.getId().equals(staffId))
+                        || (h.getOrganizzatore() != null && h.getOrganizzatore().getId().equals(staffId)))
+                .collect(Collectors.toList());
+    }
+
+    public List<Hackathon> consultaHackathonInValutazione(Long giudiceId) {
+        return hackathonRepository.findAll().stream()
+                .peek(Hackathon::aggiornaStatoCorrente)
+                .filter(h -> h.getGiudici().stream().anyMatch(g -> g.getId().equals(giudiceId)))
+                .filter(h -> h.getStato() == HackathonStatus.VALUTAZIONE || h.getStato() == HackathonStatus.IN_CORSO)
+                .collect(Collectors.toList());
     }
 
     public Hackathon getHackathon(Long hackathonId) {

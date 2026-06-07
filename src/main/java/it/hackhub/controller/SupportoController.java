@@ -24,8 +24,16 @@ public class SupportoController {
         return supportoService.richiediSupporto(utenteId, teamId, hackathonId, topic, descrizione, priorita);
     }
 
+    public RichiestaSupporto inoltraSegnalazione(Long mentoreId, Long teamId, Long hackathonId, String motivazione) {
+        return supportoService.segnalaTeam(mentoreId, teamId, hackathonId, motivazione);
+    }
+
     public List<RichiestaSupporto> visualizzaRichiesteAperte() {
         return supportoService.recuperaRichiesteAperte();
+    }
+
+    public List<RichiestaSupporto> visualizzaRichiestePerHackathon(Long hackathonId) {
+        return supportoService.recuperaRichiestePerHackathon(hackathonId);
     }
 
     public RichiestaSupporto getDettagliRichiesta(Long richiestaId) {

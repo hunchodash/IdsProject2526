@@ -28,6 +28,14 @@ public class Sottomissione {
         return "Team " + teamId + " - " + contenuto + " (" + dataSottomissione + ")";
     }
 
+    public void aggiornaContenuto(String nuovoContenuto) {
+        if (nuovoContenuto == null || nuovoContenuto.isBlank()) {
+            throw new IllegalArgumentException("Il contenuto della sottomissione è obbligatorio");
+        }
+        this.contenuto = nuovoContenuto;
+        this.dataSottomissione = LocalDateTime.now();
+    }
+
     public Valutazione aggiornaValutazione(int punteggio, String commento) {
         return aggiornaValutazione(null, punteggio, commento);
     }

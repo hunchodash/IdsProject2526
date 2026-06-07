@@ -17,8 +17,20 @@ public class SottomissioneController {
         return sottomissioneService.inviaSottomissione(teamId, hackathonId, contenuto);
     }
 
+    public List<Sottomissione> consultaSottomissioni(Long teamId, Long hackathonId) {
+        return sottomissioneService.consultaSottomissioni(teamId, hackathonId);
+    }
+
     public List<Sottomissione> consultaSottomissioni(Long hackathonId) {
         return sottomissioneService.consultaSottomissioni(hackathonId);
+    }
+
+    public List<Sottomissione> consultaSottomissioniStaff(Long hackathonId, Long staffId) {
+        return sottomissioneService.consultaSottomissioniStaff(hackathonId, staffId);
+    }
+
+    public Sottomissione aggiornaSottomissione(Long sottomissioneId, String nuovoContenuto) {
+        return sottomissioneService.aggiornaSottomissione(sottomissioneId, nuovoContenuto);
     }
 
     public Sottomissione getDettagli(Long sottomissioneId) {

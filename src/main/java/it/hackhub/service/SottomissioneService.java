@@ -43,8 +43,43 @@ public class SottomissioneService {
         return sottomissione;
     }
 
+    public List<Sottomissione> consultaSottomissioni(Long teamId, Long hackathonId) {
+        if (!teamRepository.findById(teamId).isPresent()) {
+            throw new TeamNonTrovatoException();
+        }
+        Hackathon hackathon = hackathonRepository.findById(hackathonId).orElseThrow(HackathonNonTrovatoException::new);
+        if (!hackathon.verificaGiaIscritto(teamId)) {
+            throw new TeamNonIscrittoException();
+        }
+        return sottomissioneRepository.findByHackathonId(hackathonId).stream()
+                .filter(s -> s.getTeamId().equals(teamId))
+                .toList();
+    }
+
     public List<Sottomissione> consultaSottomissioni(Long hackathonId) {
         return sottomissioneRepository.findByHackathonId(hackathonId);
+    }
+
+    public List<Sottomissione> consultaSottomissioniStaff(Long hackathonId, Long staffId) {
+        Hackathon hackathon = hackathonRepository.findById(hackathonId).orElseThrow(HackathonNonTrovatoException::new);
+        boolean assegnato = hackathon.getGiudici().stream().anyMatch(g -> g.getId().equals(staffId))
+                || hackathon.getMentori().stream().anyMatch(m -> m.getId().equals(staffId))
+                || (hackathon.getOrganizzatore() != null && hackathon.getOrganizzatore().getId().equals(staffId));
+        if (!assegnato) {
+            throw new IllegalStateException("Lo staff può consultare solo sottomissioni di hackathon assegnati");
+        }
+        return sottomissioneRepository.findByHackathonId(hackathonId);
+    }
+
+    public Sottomissione aggiornaSottomissione(Long sottomissioneId, String nuovoContenuto) {
+        Sottomissione sottomissione = getDettagli(sottomissioneId);
+        Hackathon hackathon = hackathonRepository.findById(sottomissione.getHackathonId()).orElseThrow(HackathonNonTrovatoException::new);
+        if (!hackathon.isInCorso()) {
+            throw new IllegalStateException("Aggiornamento non possibile: hackathon non in corso");
+        }
+        sottomissione.aggiornaContenuto(nuovoContenuto);
+        sottomissioneRepository.save(sottomissione);
+        return sottomissione;
     }
 
     public Sottomissione getDettagli(Long sottomissioneId) {

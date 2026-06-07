@@ -35,6 +35,17 @@ public class SupportoService {
         return richiesta;
     }
 
+    public RichiestaSupporto segnalaTeam(Long mentoreId, Long teamId, Long hackathonId, String motivazione) {
+        if (motivazione == null || motivazione.isBlank()) {
+            throw new IllegalArgumentException("Motivazione obbligatoria");
+        }
+        RichiestaSupporto segnalazione = new RichiestaSupporto(System.currentTimeMillis(), mentoreId, teamId,
+                hackathonId, "Segnalazione team", motivazione, "ALTA");
+        segnalazione.salvaNelSistema();
+        richiestaSupportoRepository.save(segnalazione);
+        return segnalazione;
+    }
+
     public List<RichiestaSupporto> recuperaRichiesteAperte() {
         return richiestaSupportoRepository.findAperte();
     }
