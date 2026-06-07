@@ -11,21 +11,13 @@ import java.util.stream.Collectors;
 public class InMemoryTeamRepository implements TeamRepository {
     private final Map<Long, Team> data = new HashMap<>();
 
-    @Override
-    public Optional<Team> findById(Long id) {
-        return Optional.ofNullable(data.get(id));
+    public void save(Team team) { data.put(team.getId(), team); }
+    public Optional<Team> findById(Long id) { return Optional.ofNullable(data.get(id)); }
+    public Optional<Team> findByNomeTeam(String nomeTeam) {
+        return data.values().stream().filter(t -> t.getNomeTeam().equalsIgnoreCase(nomeTeam)).findFirst();
     }
-
-    @Override
-    public void save(Team team) {
-        data.put(team.getId(), team);
-    }
-
-    @Override
     public List<Team> findByMembro(Utente utente) {
-        return data.values().stream()
-                .filter(team -> team.getMembri().contains(utente))
-                .collect(Collectors.toList());
+        return data.values().stream().filter(t -> t.getMembri().contains(utente)).collect(Collectors.toList());
     }
-
+    public List<Team> findAll() { return new ArrayList<>(data.values()); }
 }

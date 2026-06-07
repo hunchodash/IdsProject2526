@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TeamRepository {
-    Optional<Team> findById(Long id);
     void save(Team team);
+    Optional<Team> findById(Long id);
+    Optional<Team> findByNomeTeam(String nomeTeam);
     List<Team> findByMembro(Utente utente);
+    List<Team> findAll();
 }

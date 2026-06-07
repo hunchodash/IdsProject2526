@@ -3,7 +3,6 @@ package it.hackhub.service;
 import it.hackhub.domain.Utente;
 import it.hackhub.repository.UtenteRepository;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
 @Service
@@ -14,29 +13,32 @@ public class UtenteService {
         this.utenteRepository = utenteRepository;
     }
 
-    public void registraUtente(String nome, String email, String password) {
-        Long nuovoId = System.currentTimeMillis();
-        Utente nuovoUtente = new Utente(nuovoId, nome, email, password);
-        utenteRepository.save(nuovoUtente);
-    }
-
-    public Optional<Utente> login(String email, String password) {
-        Optional<Utente> utente = utenteRepository.findByEmail(email);
-        if (utente.isPresent() && utente.get().getPassword().equals(password)) {
-            return utente;
+    public Utente registraUtente(String nome, String email, String password) {
+        if (utenteRepository.findByEmail(email).isPresent()) {
+            throw new IllegalStateException("Email già registrata");
         }
-        return Optional.empty();
-    }
-
-    public Optional<Utente> findByEmail(String email) {
-        return utenteRepository.findByEmail(email);
-    }
-
-    public Optional<Utente> findMentoreDisponibile() {
-        return utenteRepository.findMentore();
-    }
-
-    public void salvaUtente(Utente utente) {
+        Utente utente = new Utente(System.currentTimeMillis(), nome, email, password);
         utenteRepository.save(utente);
+        return utente;
+    }
+
+    public Optional<Utente> accedi(String email, String password) {
+        return utenteRepository.findByEmail(email)
+                .filter(utente -> utente.getPassword().equals(password));
+    }
+
+    public Utente recuperaUtente(Long utenteId) {
+        return utenteRepository.findById(utenteId)
+                .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+    }
+
+    public Utente aggiornaProfilo(Long utenteId, String nuovoNome, String nuovaEmail) {
+        Utente utente = recuperaUtente(utenteId);
+        utenteRepository.findByEmail(nuovaEmail)
+                .filter(u -> !u.getId().equals(utenteId))
+                .ifPresent(u -> { throw new IllegalStateException("Email già registrata"); });
+        utente.aggiornaProfilo(nuovoNome, nuovaEmail);
+        utenteRepository.save(utente);
+        return utente;
     }
 }

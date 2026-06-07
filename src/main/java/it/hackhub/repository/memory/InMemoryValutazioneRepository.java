@@ -8,24 +8,17 @@ import java.util.stream.Collectors;
 
 @Repository
 public class InMemoryValutazioneRepository implements ValutazioneRepository {
-    private final List<Valutazione> databaseValutazioni = new ArrayList<>();
+    private final List<Valutazione> data = new ArrayList<>();
 
-    @Override
-    public void save(Valutazione v) {
-        databaseValutazioni.add(v);
-    }
-
-    @Override
-    public List<Valutazione> findByHackathonId(Long hackathonId) {
-        return databaseValutazioni.stream()
-                .filter(v -> v.getHackathonId().equals(hackathonId))
-                .collect(Collectors.toList());
-    }
-
-    @Override
+    public void save(Valutazione valutazione) { data.add(valutazione); }
     public List<Valutazione> findByTeamId(Long teamId) {
-        return databaseValutazioni.stream()
-                .filter(v -> v.getTeamId().equals(teamId))
-                .collect(Collectors.toList());
+        return data.stream().filter(v -> v.getTeamId().equals(teamId)).collect(Collectors.toList());
     }
+    public List<Valutazione> findByHackathonId(Long hackathonId) {
+        return data.stream().filter(v -> v.getHackathonId().equals(hackathonId)).collect(Collectors.toList());
+    }
+    public List<Valutazione> findBySottomissioneId(Long sottomissioneId) {
+        return data.stream().filter(v -> Objects.equals(v.getSottomissioneId(), sottomissioneId)).collect(Collectors.toList());
+    }
+    public List<Valutazione> findAll() { return new ArrayList<>(data); }
 }

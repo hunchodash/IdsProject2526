@@ -1,8 +1,7 @@
 package it.hackhub.domain.staff;
 
 public class Mentore extends MembroStaff {
-
     public Mentore(Long id, String nome, String email, String password) {
-        super(id, nome, email, password); // Passala al padre
+        super(id, nome, email, password);
     }
 }

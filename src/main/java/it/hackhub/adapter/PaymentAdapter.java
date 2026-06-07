@@ -1,7 +1,7 @@
 package it.hackhub.adapter;
 
+import it.hackhub.domain.Team;
+
 public interface PaymentAdapter {
-
-    boolean erogaPremio(Long teamId, double importo);
-
+    boolean erogaPremio(Team team, double importo);
 }
